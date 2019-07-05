@@ -5,7 +5,8 @@ from django.http import HttpRequest
 from django.template.loader import render_to_string
 from lists.models import Item
 
-class SmokeTest(TestCase):
+
+class HomePageTest(TestCase):
     '''тест домашней страницы'''
     def test_saving_and_retrieving_items(self):
         first_item = Item()
@@ -53,5 +54,14 @@ class SmokeTest(TestCase):
         response = self.client.post('/', data={'item_text': 'A new list item'})
         self.assertEqual(response.status_code, 302)
         self.assertEqual(response['location'], '/')
+
+
+    def test_displays_all_list_items(self):
+        '''тест: отображаются все элементы списка'''
+        Item.objects.create(text='itemey 1')
+        Item.objects.create(text='itemey 2')
+        response = self.client.get('/')
+        self.assertIn('itemey 1', response.content.decode())
+        self.assertIn('itemey 2', response.content.decode())
 
 
